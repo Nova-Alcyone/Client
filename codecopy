@@ -1,0 +1,684 @@
+package qc.novaalcyone;
+
+import qc.novaalcyone.utils.MicrosoftThread;
+
+import fr.theshark34.openlauncherlib.util.ramselector.RamSelector;
+import fr.theshark34.swinger.event.SwingerEvent;
+import fr.theshark34.swinger.event.SwingerEventListener;
+import fr.theshark34.swinger.textured.STexturedButton;
+
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
+import java.awt.Desktop;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+
+
+import static qc.novaalcyone.Frame.*;
+
+public class Panel extends JPanel implements SwingerEventListener {
+    private final Image background = getImage("background.png");
+    private final STexturedButton profil = new STexturedButton(getBufferedImage("Profil.png"), getBufferedImage("Profil.png"));
+    private final STexturedButton profil1 = new STexturedButton(getBufferedImage("profil-hover.png"));
+    private final STexturedButton forum = new STexturedButton(getBufferedImage("Forum.png"), getBufferedImage("Forum.png"));
+    private final STexturedButton forum1 = new STexturedButton(getBufferedImage("forum-hover.png"));
+    private final STexturedButton support = new STexturedButton(getBufferedImage("Support.png"), getBufferedImage("Support.png"));
+    private final STexturedButton support1 = new STexturedButton(getBufferedImage("support-hover.png"));
+    private final STexturedButton discord = new STexturedButton(getBufferedImage("Discord.png"), getBufferedImage("Discord.png"));
+    private final STexturedButton discord1 = new STexturedButton(getBufferedImage("discord-hover.png"));
+    private final STexturedButton play = new STexturedButton(getBufferedImage("lancer.png"), getBufferedImage("lancer.png"));
+    private final STexturedButton play1 = new STexturedButton(getBufferedImage("play-clicked.png"));
+    private final STexturedButton close = new STexturedButton(getBufferedImage("Close.png"), getBufferedImage("Close.png"));
+    private final Image settings = getImage("settings.png");
+    private final STexturedButton settingsClose = new STexturedButton(getBufferedImage("Close.png"));
+    private final RamSelector ramSelector = new RamSelector(Frame.getRamFile());
+    private final STexturedButton name = new STexturedButton(getBufferedImage("name.png"), getBufferedImage("name.png"));
+    private final JPopupMenu popupMenu = new JPopupMenu();
+    private final JMenuItem loginMenuItem = new JMenuItem("Connexion");
+    private final JMenuItem disconnectMenuItem = new JMenuItem("Déconnexion");
+    private final JMenuItem settingsMenuItem = new JMenuItem("Options");
+    private final STexturedButton boutique = new STexturedButton(getBufferedImage("boutique.png"), getBufferedImage("boutique.png"));
+    private final STexturedButton boutique1 = new STexturedButton(getBufferedImage("boutique-hover.png"));
+    private JFrame myFrame = new JFrame();
+    private JPanel ramSelectionPanel; // New panel to hold ramSelection menu and settings image
+
+
+    private boolean boutiqueHover;
+    private boolean profilHover;
+    private boolean forumHover;
+    private boolean supportHover;
+    private boolean discordHover;
+    private boolean playClickedB;
+    private JLabel jsonLabel;
+
+    //private boolean settingsStats;
+    public Panel() throws IOException {
+
+        this.setLayout(null);
+
+        play.setBounds(350, 350);
+        play.setLocation(350, 350);
+        play.addEventListener(this);
+        this.add(play);
+        play.addMouseListener(new MouseAdapter() {
+
+            public void mouseEntered(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            }
+
+            public void mouseExited(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+
+        play1.setBounds(350, 350);
+        play1.setLocation(350, 350);
+        play1.addEventListener(this);
+        this.add(play1);
+        play1.setVisible(false);
+
+        close.setBounds(900, 0);
+        close.setLocation(900, 0);
+        close.addEventListener(this);
+        this.add(close);
+
+        name.setBounds(255, 150);
+        name.setLocation(255, 150);
+        name.addEventListener(this);
+        this.add(name);
+
+        //settingsClose.setBounds(335, 416);
+        //settingsClose.setLocation(335, 416);
+        //settingsClose.addEventListener(this);
+        //this.add(settingsClose);
+        //settingsClose.setVisible(false);
+
+        boutique.setBounds(12, 100);
+        boutique.setLocation(12, 100);
+        boutique.addEventListener(this);
+        this.add(boutique);
+        boutique.addMouseListener(new MouseAdapter() {
+
+            public void mouseEntered(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                boutiqueHover = true;
+            }
+
+            public void mouseExited(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                boutiqueHover = false;
+            }
+        });
+
+        boutique1.setBounds(12, 100);
+        boutique1.setLocation(12, 100);
+        boutique1.addEventListener(this);
+        this.add(boutique1);
+        boutique1.setVisible(false);
+
+        forum.setBounds(12, 170);
+        forum.setLocation(12, 170);
+        forum.addEventListener(this);
+        this.add(forum);
+        forum.addMouseListener(new MouseAdapter() {
+
+            public void mouseEntered(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                forumHover = true;
+            }
+
+            public void mouseExited(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                forumHover = false;
+            }
+        });
+
+        forum1.setBounds(12, 170);
+        forum1.setLocation(12, 170);
+        forum1.addEventListener(this);
+        this.add(forum1);
+        forum1.setVisible(false);
+
+        support.setBounds(12, 240);
+        support.setLocation(12, 240);
+        support.addEventListener(this);
+        this.add(support);
+        support.addMouseListener(new MouseAdapter() {
+
+            public void mouseEntered(MouseEvent e) {
+                System.out.println("Entering");
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                supportHover = true;
+            }
+
+            public void mouseExited(MouseEvent e) {
+                System.out.println("Exiting");
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                supportHover = false;
+            }
+        });
+
+        support1.setBounds(12, 240);
+        support1.setLocation(12, 240);
+        support1.addEventListener(this);
+        this.add(support1);
+        support1.setVisible(false);
+
+        discord.setBounds(12, 310);
+        discord.setLocation(12, 310);
+        discord.addEventListener(this);
+        this.add(discord);
+        discord.addMouseListener(new MouseAdapter() {
+
+            public void mouseEntered(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                discordHover = true;
+            }
+
+            public void mouseExited(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                discordHover = false;
+            }
+        });
+
+        discord1.setBounds(12, 310);
+        discord1.setLocation(12, 310);
+        discord1.addEventListener(this);
+        this.add(discord1);
+        discord1.setVisible(false);
+
+        profil.setBounds(12, 488);
+        profil.setLocation(12, 488);
+        this.add(profil);
+        profil.addMouseListener(new MouseAdapter() {
+
+            public void mouseEntered(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                profilHover = true;
+            }
+
+            public void mouseExited(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                profilHover = false;
+            }
+        });
+        profil.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                final String refresh_token = Frame.getSaver().get("refresh_token");
+                popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                if (refresh_token != null && !refresh_token.isEmpty()) {
+                    popupMenu.add(disconnectMenuItem);
+                    popupMenu.add(settingsMenuItem);
+                    popupMenu.remove(loginMenuItem);
+                } else {
+                    popupMenu.add(loginMenuItem);
+                    popupMenu.add(settingsMenuItem);
+                }
+            }
+        });
+
+        // ActionListener for loginMenuItem (Microsoft login event)
+        loginMenuItem.addActionListener(e -> {
+            Thread t = new Thread(new MicrosoftThread());
+            t.start();
+        });
+
+        //ActionListener for settingsMenuItem (Settings event)
+        settingsMenuItem.addActionListener(e -> {
+            ramSelector.display();
+            //    settingsStats = true;
+            //    settingsClose.setVisible(true);
+        });
+
+
+        disconnectMenuItem.addActionListener(e -> {
+            Frame.getSaver().remove("refresh_token"); // Delete the stored refresh token
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Vous êtes désormais déconnecté.",
+                    "Décconecté",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            // Reset the UI to the initial state (remove userMenuItem and disconnectMenuItem, add loginMenuItem)
+            popupMenu.remove(disconnectMenuItem);
+            popupMenu.remove(settingsMenuItem);
+            popupMenu.add(loginMenuItem);
+            popupMenu.add(settingsMenuItem);
+        });
+
+        profil1.setBounds(12, 488);
+        profil1.setLocation(12, 488);
+        profil1.addEventListener(this);
+        this.add(profil1);
+        profil1.setVisible(false);
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        g.drawImage(background, 0, 0, this.getWidth(), this.getHeight(), this);
+
+        if (!boutiqueHover) {
+            boutique1.setVisible(false);
+        }
+        if (boutiqueHover) {
+            boutique1.setVisible(true);
+        }
+        if (forumHover) {
+            forum1.setVisible(true);
+        }
+        if (!forumHover) {
+            forum1.setVisible(false);
+        }
+        if (supportHover) {
+            support1.setVisible(true);
+        }
+        if (!supportHover) {
+            support1.setVisible(false);
+        }
+        if (discordHover) {
+            discord1.setVisible(true);
+        }
+        if (!discordHover) {
+            discord1.setVisible(false);
+        }
+        if (profilHover) {
+            profil1.setVisible(true);
+        }
+        if (!profilHover) {
+            profil1.setVisible(false);
+        }
+        if (profilHover) {
+            profil1.setVisible(true);
+        }
+        if (playClickedB) {
+            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+            play.setVisible(false);
+            play1.setVisible(true);
+            executor.schedule(() -> {
+                playClickedB = false;
+            }, 1, TimeUnit.MILLISECONDS);
+            executor.shutdown();
+        }
+        if (!playClickedB) {
+            play1.setVisible(false);
+            play.setVisible(true);
+        }
+        //if (settingsStats) {
+        //    g.drawImage(settings, 12, 416, this);
+        //}
+        //if (!settingsStats) {
+        //    repaint();
+        //}
+    }
+
+    ;
+
+    @Override
+    public void onEvent(SwingerEvent swingerEvent) {
+        final String refresh_token = Frame.getSaver().get("refresh_token");
+        if (swingerEvent.getSource() == play) {
+            if (refresh_token != null && !refresh_token.isEmpty()) {
+                ramSelector.save();
+
+                try {
+                    Launcher.update();
+                } catch (Exception e) {
+                    Launcher.getReporter().catchError(e, "Impossible de mettre à jour le launcher.");
+                }
+
+                try {
+                    Launcher.launch();
+                } catch (Exception e) {
+                    Launcher.getReporter().catchError(e, "Impossible de lancer le jeu.");
+                }
+            }
+            else {
+                Thread t = new Thread(new MicrosoftThread());
+                t.start();
+            }
+            playClickedB = true;
+            play.repaint();
+            } else if (swingerEvent.getSource() == close) {
+                System.exit(0);
+            } else if (swingerEvent.getSource() == boutique) {
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    URI uri = new URI("https://novaalcyone.com/shop");
+                    desktop.browse(uri);
+                } catch (IOException | URISyntaxException excp) {
+                    excp.printStackTrace();
+                }
+            } else if (swingerEvent.getSource() == forum) {
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    URI uri = new URI("https://novaalcyone.com/forum");
+                    desktop.browse(uri);
+                } catch (IOException | URISyntaxException excp) {
+                    excp.printStackTrace();
+                }
+            } else if (swingerEvent.getSource() == support) {
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    URI uri = new URI("https://novaalcyone.com/support");
+                    desktop.browse(uri);
+                } catch (IOException | URISyntaxException excp) {
+                    excp.printStackTrace();
+                }
+            } else if (swingerEvent.getSource() == discord) {
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    URI uri = new URI("https://discord.gg/XYhybrGzqb");
+                    desktop.browse(uri);
+                } catch (IOException | URISyntaxException excp) {
+                    excp.printStackTrace();
+                }
+            }
+            //else if (swingerEvent.getSource() == settingsClose) {
+            //    settingsClose.setVisible(false);
+            //    settingsStats = false;
+            //}
+        }
+        public RamSelector getRamSelector() {
+            return ramSelector;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package qc.novaalcyone;
+
+import fr.flowarg.flowupdater.FlowUpdater;
+import fr.flowarg.flowupdater.utils.ModFileDeleter;
+import fr.flowarg.flowupdater.utils.UpdaterOptions;
+import fr.flowarg.flowupdater.versions.AbstractForgeVersion;
+import fr.flowarg.flowupdater.versions.ForgeVersionBuilder;
+import fr.flowarg.flowupdater.versions.VanillaVersion;
+import fr.flowarg.openlauncherlib.NoFramework;
+import fr.litarvan.openauth.microsoft.MicrosoftAuthResult;
+import fr.litarvan.openauth.microsoft.MicrosoftAuthenticationException;
+import fr.litarvan.openauth.microsoft.MicrosoftAuthenticator;
+import fr.theshark34.openlauncherlib.minecraft.*;
+import fr.theshark34.openlauncherlib.util.CrashReporter;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.util.List;
+
+
+
+import javax.swing.*;
+
+
+public class Launcher {
+    private final static GameInfos gameInfos = new GameInfos("novaalcyone", new GameVersion("1.19.4", GameType.V1_13_HIGHER_FORGE), new GameTweak[]{GameTweak.FORGE});
+    private final static Path path = gameInfos.getGameDir();
+    public static File crashFile = new File(String.valueOf(path), "crashes");
+    private final static CrashReporter reporter = new CrashReporter(String.valueOf(crashFile), path);
+    private static AuthInfos authInfos;
+    public static String playerUsername;  // Step 1: Class variable to store the username
+
+    public static void auth() throws MicrosoftAuthenticationException {
+        MicrosoftAuthenticator microsoftAuthenticator = new MicrosoftAuthenticator();
+        final String refresh_token = Frame.getSaver().get("refresh_token");
+        MicrosoftAuthResult result;
+
+        if (refresh_token != null && !refresh_token.isEmpty()) {
+            result = microsoftAuthenticator.loginWithRefreshToken(refresh_token);
+            playerUsername = Frame.getSaver().get("player_username"); // Step 3: Retrieve and store username
+            authInfos = new AuthInfos(result.getProfile().getName(), result.getAccessToken(), result.getProfile().getId());
+        } else {
+            result = microsoftAuthenticator.loginWithWebview();
+            Frame.getSaver().set("refresh_token", result.getRefreshToken());
+            authInfos = new AuthInfos(result.getProfile().getName(), result.getAccessToken(), result.getProfile().getId());
+            // Step 2: Save the username
+            if (result.getProfile() != null) {
+                playerUsername = result.getProfile().getName();
+                Frame.getSaver().set("player_username", playerUsername);
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Bienvenue " + playerUsername + " sur Nova Alcyone!",
+                        "Yay!",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+        }
+    }
+
+
+    public static void update() throws Exception {
+
+        VanillaVersion vanillaVersion = new VanillaVersion.VanillaVersionBuilder().withName("1.19.4").build();
+        UpdaterOptions options = new UpdaterOptions.UpdaterOptionsBuilder().build();
+
+        AbstractForgeVersion version = new ForgeVersionBuilder(ForgeVersionBuilder.ForgeVersionType.NEW).withMods("https://novaalcyone.com/storage/lanceur/mods.json").withFileDeleter(new ModFileDeleter(true)).withForgeVersion("45.1.0").build();
+
+        FlowUpdater updater = new FlowUpdater.FlowUpdaterBuilder().withVanillaVersion(vanillaVersion).withUpdaterOptions(options).withModLoaderVersion(version).build();
+        updater.update(path);
+    }
+
+    public static void launch() throws Exception {
+        NoFramework noFramework = new NoFramework(path, authInfos, GameFolder.FLOW_UPDATER);
+        noFramework.getAdditionalVmArgs().addAll(List.of(Frame.getInstance().getPanel().getRamSelector().getRamArguments()));
+        noFramework.launch("1.19.4", "45.1.0", NoFramework.ModLoader.FORGE);
+    }
+
+    public static CrashReporter getReporter() {
+        return reporter;
+    }
+
+    public static Path getPath() {
+        return path;
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package qc.novaalcyone;
+
+import fr.theshark34.openlauncherlib.util.Saver;
+import fr.theshark34.swinger.util.WindowMover;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+
+public class Frame extends JFrame {
+
+    private static Frame instance;
+    private final  Panel panel;
+    private final  static File ramFile = new File(String.valueOf(Launcher.getPath()), "ram.txt");
+    public static File saverFile = new File(String.valueOf(Launcher.getPath()), "user.stock");
+    public static Saver saver = new Saver(saverFile);
+
+    public Frame() throws IOException {
+        instance = this;
+        this.setTitle("Nova Launcher V1.0");
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setSize(950, 550);
+        this.setUndecorated(true);
+        this.setLocationRelativeTo(null);
+        this.setIconImage(getImage("Alcyone.png"));
+        this.setContentPane(panel = new Panel());
+
+        WindowMover mover = new WindowMover(this);
+        this.addMouseListener(mover);
+        this.addMouseMotionListener(mover);
+
+        this.setVisible(true);
+    }
+
+    public static void main(String[] args) throws IOException {
+        Launcher.crashFile.mkdirs();
+        if (!ramFile.exists()) {
+            ramFile.createNewFile();
+        }
+        if (!saverFile.exists()) {
+            saverFile.createNewFile();
+        }
+
+        instance = new Frame();
+    }
+
+
+
+    public static Image getImage(String fichier) throws IOException {
+        InputStream inputStream = Frame.getInstance().getClass().getClassLoader().getResourceAsStream(fichier);
+        if (inputStream != null) {
+            return ImageIO.read(inputStream);
+        }
+        return null;
+    }
+
+    public static BufferedImage getBufferedImage(String fichier) throws IOException {
+        InputStream inputStream = Frame.getInstance().getClass().getClassLoader().getResourceAsStream(fichier);
+        if (inputStream != null) {
+            return ImageIO.read(inputStream);
+        }
+        return null;
+    }
+
+    public static Frame getInstance() {
+        return instance;
+    }
+
+    public Panel getPanel() {
+        return this.panel;
+    }
+
+    public static File getRamFile() {
+        return ramFile;
+    }
+
+    public static Saver getSaver() {
+        return saver;
+    }
+}
