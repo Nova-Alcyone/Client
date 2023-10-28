@@ -14,13 +14,8 @@ import fr.theshark34.openlauncherlib.minecraft.*;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
-
 import javax.swing.*;
-
 
 public class Launcher {
     private final static GameInfos gameInfos = new GameInfos("novaclient", new GameVersion("1.19.4", GameType.V1_13_HIGHER_FORGE), new GameTweak[]{GameTweak.FORGE});
@@ -60,10 +55,11 @@ public class Launcher {
         VanillaVersion vanillaVersion = new VanillaVersion.VanillaVersionBuilder().withName("1.19.4").build();
         UpdaterOptions options = new UpdaterOptions.UpdaterOptionsBuilder().build();
 
-        AbstractForgeVersion version = new ForgeVersionBuilder(ForgeVersionBuilder.ForgeVersionType.NEW).withMods("https://novaalcyone.com/storage/lanceur/novaclient/mods.php").withFileDeleter(new ModFileDeleter(true)).withForgeVersion("45.1.0").build();
+        AbstractForgeVersion version = new ForgeVersionBuilder(ForgeVersionBuilder.ForgeVersionType.NEW).withMods("https://novaalcyone.com/storage/lanceur/mods.php").withFileDeleter(new ModFileDeleter(true)).withForgeVersion("45.1.0").build();
 
         FlowUpdater updater = new FlowUpdater.FlowUpdaterBuilder().withVanillaVersion(vanillaVersion).withUpdaterOptions(options).withModLoaderVersion(version).build();
         updater.update(path);
+
     }
 
     public static void launch() throws Exception {

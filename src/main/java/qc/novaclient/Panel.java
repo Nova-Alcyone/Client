@@ -16,6 +16,11 @@ import java.net.URL;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.logging.*;
+
 
 public class Panel extends JPanel {
 
@@ -29,25 +34,27 @@ public class Panel extends JPanel {
         }
     }
 
-    private final Image background = getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/background.png");
-    private final JButton profil1 = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/profil-hover.png"));
-    private final JButton forum = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/Forum.png"));
-    private final JButton forum1 = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/forum-hover.png"));
-    private final JButton support = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/Support.png"));
-    private final JButton support1 = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/support-hover.png"));
-    private final JButton discord = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/Discord.png"));
-    private final JButton discord1 = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/discord-hover.png"));
-    private final JButton play = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/lancer.png"));
-    private final JButton play1 = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/play-clicked.png"));
-    private final JButton close = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/Close.png"));
+    private final Image background = getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/background.png?raw=true");
+    private final JButton profil1 = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/profil-hover.png?raw=true"));
+    private final JButton forum = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/Forum.png?raw=true"));
+    private final JButton forum1 = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/forum-hover.png?raw=true"));
+    private final JButton support = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/Support.png?raw=true"));
+    private final JButton support1 = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/support-hover.png?raw=true"));
+    private final JButton discord = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/Discord.png?raw=true"));
+    private final JButton discord1 = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/discord-hover.png?raw=true"));
+    private final JButton play = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/lancer.png?raw=true"));
+    private final JButton play1 = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/play-clicked.png?raw=true"));
+    private final JButton close = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/Close.png?raw=true"));
     private final RamSelector ramSelector = new RamSelector(qc.novaclient.Frame.getRamFile());
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final JMenuItem loginMenuItem = new JMenuItem("Connexion");
     private final JMenuItem disconnectMenuItem = new JMenuItem("Déconnexion");
     private final JMenuItem settingsMenuItem = new JMenuItem("Options");
-    private final JButton boutique = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/boutique.png"));
-    private final JButton boutique1 = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/boutique-hover.png"));
-    private static JProgressBar progressBar;
+    private final JButton boutique = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/boutique.png?raw=true"));
+    private final JButton boutique1 = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/boutique-hover.png?raw=true"));
+    private static JProgressBar progressBar = new JProgressBar();
+    private static JProgressBar progressBar2 = new JProgressBar();
+    private List<String> logMessages = new ArrayList<>(); // Create an in-memory log storage
 
     private boolean boutiqueHover;
     private boolean profilHover;
@@ -56,11 +63,17 @@ public class Panel extends JPanel {
     private boolean discordHover;
     private boolean playClickedB;
     private boolean closeHover;
+    private boolean loading;
 
+    private void handleLaunchUpdateError(Exception exception) {
+        exception.printStackTrace(); // You can print the stack trace for debugging purposes
+        progressBar.setVisible(false);
+        JOptionPane.showMessageDialog(null, "Essayez de redémarrer votre lanceur. Si le problème persiste, contactez le support.", "Erreur", JOptionPane.ERROR_MESSAGE);
+    }
     public Panel() {
         this.setLayout(null);
 
-        play.setBounds(321, 350, 283, 63);
+        play.setBounds(342, 350, 283, 63);
         this.add(play);
         play.addActionListener(e -> {
             final String refresh_token = qc.novaclient.Frame.getSaver().get("refresh_token");
@@ -68,34 +81,85 @@ public class Panel extends JPanel {
                 ramSelector.save();
                 ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-                try {
-                    progressBar.setVisible(true);
-                    progressBar.setString("Installation en cour...");
-                    executor.schedule(() -> {
-                        try {
-                            Launcher.update();
-                        } catch (Exception ignored) {
-                        }
+                loading = false;
+                System.out.println(loading);
+                progressBar.setVisible(false);
+                progressBar2.setVisible(false);
 
-                        try {
-                            Launcher.launch();
+                executor.schedule(() -> {
+                    try {
+                        progressBar.setString("Opérations de pré-lancement en cours...");
+                        progressBar.setMaximum(100);
+                        progressBar.setVisible(true);
+                        CompletableFuture<Void> task1 = CompletableFuture.runAsync(() -> {
+                            try {
+                                Launcher.update();
+                                loading = true;
+                                Thread.sleep(500);
+                                progressBar.setValue(100);
+                                if (loading == true ) {
+                                    try {
+                                        Launcher.launch();
+                                        loading = false;
+                                        progressBar.setVisible(false);
+                                        progressBar2.setValue(0);
+                                        progressBar2.setMaximum(100);
+                                        progressBar2.setString("Lancement en cours...");
+                                        progressBar2.setVisible(true);
+                                        for (int i = 0; i <= 100; i += 1) {
+                                            try {
+                                                if (i == 100) {
+                                                    break;
+                                                }
+                                                Thread.sleep(75);
+                                                progressBar2.setValue(i);
+                                            } catch (Exception updateException) {
+                                                handleLaunchUpdateError(updateException);
+                                                return;
+                                            }
+                                        }
+                                    } catch (Exception launchException) {
+                                        handleLaunchUpdateError(launchException);
+                                    }
+                                }
+                                progressBar2.setVisible(false);
+                            } catch (Exception updateException) {
+                                handleLaunchUpdateError(updateException);
+                                return;
+                            }
+                        });
+                        CompletableFuture<Void> task2 = CompletableFuture.runAsync(() -> {
+                            progressBar.setValue(0);
+                            while (loading == false) {
+                                if (loading == false) {
+                                    for (int i = 0; i < 90; i += 1) {
+                                        try {
+                                            if (i == 90 || loading == true) {
+                                                break; // Break out of the loop when i reaches 90
+                                            }
+                                            Thread.sleep(500);
+                                            progressBar.setValue(i);
+                                        } catch (Exception updateException) {
+                                            handleLaunchUpdateError(updateException);
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    } catch (Exception updateException) {
+                        handleLaunchUpdateError(updateException);
+                        return;
+                    }
+                    progressBar2.setVisible(false);
+                }, 1, TimeUnit.SECONDS);
 
-                            progressBar.setVisible(true);
-                            progressBar.setValue(0); // Reset progress to 0%
-                            progressBar.setString("Lancement en cour..."); // Show loading message
-                            executor.schedule(() -> progressBar.setVisible(false), 25, TimeUnit.SECONDS);
-                            executor.shutdown();
-                        } catch (Exception ignored) {
-                        }
-
-                    }, 1, TimeUnit.SECONDS);
-                    executor.shutdown();
-                } catch (Exception ignored) {}
-            }
-            else {
+                executor.shutdown();
+            } else {
                 Thread t = new Thread(new MicrosoftThread());
                 t.start();
             }
+
             playClickedB = true;
             play.repaint();
         });
@@ -110,7 +174,7 @@ public class Panel extends JPanel {
             }
         });
 
-        play1.setBounds(321, 350, 283, 63);
+        play1.setBounds(342, 350, 283, 63);
         this.add(play1);
         play1.setVisible(false);
 
@@ -134,7 +198,7 @@ public class Panel extends JPanel {
         boutique.addActionListener(e -> {
             Desktop desktop = Desktop.getDesktop();
             try {
-                URI uri = new URI("https://novaalcyone.com/antares/shop");
+                URI uri = new URI("https://novaalcyone.com/shop");
                 desktop.browse(uri);
             } catch (IOException | URISyntaxException excp) {
                 excp.printStackTrace();
@@ -161,7 +225,7 @@ public class Panel extends JPanel {
         forum.addActionListener(e -> {
             Desktop desktop = Desktop.getDesktop();
             try {
-                URI uri = new URI("https://novaalcyone.com/antares/forum");
+                URI uri = new URI("https://novaalcyone.com/forum");
                 desktop.browse(uri);
             } catch (IOException | URISyntaxException excp) {
                 excp.printStackTrace();
@@ -188,7 +252,7 @@ public class Panel extends JPanel {
         support.addActionListener(e -> {
             Desktop desktop = Desktop.getDesktop();
             try {
-                URI uri = new URI("https://novaalcyone.com/antares/support/tickets");
+                URI uri = new URI("https://novaalcyone.com/support/tickets");
                 desktop.browse(uri);
             } catch (IOException | URISyntaxException excp) {
                 excp.printStackTrace();
@@ -237,7 +301,7 @@ public class Panel extends JPanel {
         this.add(discord1);
         discord1.setVisible(false);
 
-        JButton profil = createButton(getImageFromURL("https://novaalcyone.com/storage/lanceur/novaclient/img/Profil.png"));
+        JButton profil = createButton(getImageFromURL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/Profil.png?raw=true"));
         profil.setBounds(12, 488, 51, 51);
         this.add(profil);
         profil.addMouseListener(new MouseAdapter() {
@@ -297,10 +361,16 @@ public class Panel extends JPanel {
 
         // Create the progress bar
         progressBar = new JProgressBar();
-        progressBar.setBounds(321, 530, 283, 20);
+        progressBar.setBounds(342, 530, 283, 20);
         progressBar.setStringPainted(true); // Show progress percentage
         this.add(progressBar);
         progressBar.setVisible(false);
+
+        progressBar2 = new JProgressBar();
+        progressBar2.setBounds(342, 530, 283, 20);
+        progressBar2.setStringPainted(true); // Show progress percentage
+        this.add(progressBar2);
+        progressBar2.setVisible(false);
     }
 
     private JButton createButton(BufferedImage image) {

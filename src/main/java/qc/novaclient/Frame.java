@@ -21,7 +21,7 @@ public class Frame extends JFrame {
 
     public Frame() {
         instance = this;
-        this.setTitle("Nova Launcher V1.2");
+        this.setTitle("Nova Launcher");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(950, 550);
         this.setUndecorated(true);
@@ -38,7 +38,7 @@ public class Frame extends JFrame {
 
     private BufferedImage getImageFromURL() {
         try {
-            URL url = new URL("https://novaalcyone.com/storage/lanceur/novaclient/img/Nova-Antares.png");
+            URL url = new URL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/Nova-Antares.png?raw=true");
             return ImageIO.read(url);
         } catch (IOException e) {
             e.printStackTrace();
