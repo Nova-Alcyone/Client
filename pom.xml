@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>qc.novaclient</groupId>
-    <artifactId>NovaLanceur</artifactId>
+    <artifactId>NovaClient</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>fr.litarvan</groupId>
             <artifactId>openauth</artifactId>
-            <version>1.1.6</version>
+            <version>1.1.4</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -57,12 +57,6 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.14</version>
-        </dependency>
-        <dependency>
-            <groupId>com.azuriom</groupId>
-            <artifactId>azauth</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
