@@ -66,4 +66,12 @@ public class Frame extends JFrame {
     public static File getRamFile() {
         return ramFile;
     }
+
+    public static File getSaver() {
+        return saverFile;
+    }
+
+    public static String get(String string) {
+        return null;
+    }
 }
