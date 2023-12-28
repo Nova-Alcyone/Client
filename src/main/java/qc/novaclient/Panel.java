@@ -1,16 +1,13 @@
-// Quand on clique sur le lanceur, il ne bouge plus comme avant... ajouter un bar en haut? Sinon il faut revoir le clique pour sortir du Panel Option. 
 // Refresh le code quand on ce connecte! Sinon les images et le nom ne se mettent pas a jour avant le relancement de l'application.
-// Regarder pour le bouton profil qui bouge, sinon c'est pas GRAVE mais dérangeant.
 
 package qc.novaclient;
 
 import qc.novaclient.utils.ConfigReader;
 import qc.novaclient.utils.MicrosoftThread;
+import qc.novaclient.utils.OptionPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
-import fr.theshark34.openlauncherlib.util.ramselector.RamSelector;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -24,7 +21,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.CompletableFuture;
-import java.awt.geom.*;
 
 public class Panel extends JPanel {
 
@@ -40,20 +36,14 @@ public class Panel extends JPanel {
 
     private final Image background = getImageFromURL(
             "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/background.png");
-    private final Image settingsPanelLoggedOut = getImageFromURL(
-            "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil-open-logged-OutOf.png");
-    private final Image settingsPanelLoggedIn = getImageFromURL(
-            "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil-open-logged-in.png");
-    private final Image settingsPanelGameplay = getImageFromURL(
-            "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/gameplay-on.png");
+    private final JButton forum = createButton(
+            getImageFromURL("https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/Forum.png"));
     private final JButton settings = createButton(
             getImageFromURL(
                     "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/settings.png"));
     private final JButton settings1 = createButton(
             getImageFromURL(
                     "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/settings-hover.png"));
-    private final JButton forum = createButton(
-            getImageFromURL("https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/Forum.png"));
     private final JButton forum1 = createButton(
             getImageFromURL(
                     "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/forum-hover.png"));
@@ -72,69 +62,23 @@ public class Panel extends JPanel {
     private final JButton play1 = createButton(
             getImageFromURL(
                     "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/play-clicked.png"));
-    private final JButton close = createButton(
-            getImageFromURL("https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/Close.png"));
     private final JButton boutique = createButton(
             getImageFromURL("https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/boutique.png"));
     private final JButton boutique1 = createButton(
             getImageFromURL(
                     "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/boutique-hover.png"));
-    private final JButton gameplay = createButton(
-            getImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/gameplay-normal.png"));
-    private final JButton gameplay1 = createButton(
-            getImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/gameplay-clicked.png"));
-    private final JButton profil = createButton(
-            getImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil-normal.png"));
-    private final JButton profil1 = createButton(
-            getImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil-clicked.png"));
-    private final JButton connexion = createButton(
-            getImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/connexion.png"));
-    private final JButton deconnexion = createButton(
-            getImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/disconnect-hover.png"));
-
-    // Create a method to generate a rounded image
-    private BufferedImage getRoundedImage(BufferedImage image) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-        BufferedImage roundedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics2D g2 = roundedImage.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        Ellipse2D.Double circle = new Ellipse2D.Double(0, 0, width, height);
-        g2.setClip(circle);
-        g2.drawImage(image, 0, 0, null);
-
-        g2.dispose();
-        return roundedImage;
-    }
-
-    private JLabel usernameLabel = new JLabel(ConfigReader.getUsername());
-
-    private Image profilPicture;
-    private Image roundedProfilPicture;
 
     private static JProgressBar progressBar = new JProgressBar();
     private static JProgressBar progressBar2 = new JProgressBar();
 
     private boolean boutiqueHover;
-    private boolean settingsHover;
     private boolean settingsClicked = false;
-    private boolean settingsClickedIn;
     private boolean forumHover;
     private boolean supportHover;
     private boolean discordHover;
     private boolean playClickedB;
     private boolean loading;
-    private boolean gameplayClicked = false;
-    private boolean profilClicked = false;
-    private boolean OptionsPanel = false;
+    private boolean settingsHover;
 
     private void handleLaunchUpdateError(Exception exception) {
         exception.printStackTrace(); // You can print the stack trace for debugging purposes
@@ -146,57 +90,6 @@ public class Panel extends JPanel {
 
     public Panel() {
         this.setLayout(null);
-        if (ConfigReader.getUsername() != null) {
-            String username = ConfigReader.getUsername();
-            int maxCharactersPerLine = (username.length() <= 8) ? 8 : 16; // Use 8 characters if username is short,
-                                                                          // otherwise 16
-
-            usernameLabel.setFont(new Font("Verdana", Font.BOLD, 25));
-
-            // Calculate the x-position to center the label within the bounds
-            int xPosition = 340 + (200 - (maxCharactersPerLine * 15)) / 2;
-
-            usernameLabel.setBounds(xPosition, 250, maxCharactersPerLine * 15, 300);
-            usernameLabel.setForeground(Color.WHITE);
-            this.add(usernameLabel);
-            usernameLabel.setVisible(false);
-
-            // Create the URL based on ConfigReader.getUsername()
-            String imageUrl = "https://mc-heads.net/avatar/" + ConfigReader.getUsername();
-
-            // Load the original image
-            profilPicture = getImageFromURL(imageUrl);
-
-            // Create and store the rounded image
-            if (profilPicture != null) {
-                roundedProfilPicture = getRoundedImage((BufferedImage) profilPicture);
-            }
-        }
-
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (profil.isVisible() || gameplay.isVisible()) {
-                    if (!isWithinImageBounds(e.getX(), e.getY())) {
-                        profilClicked = false;
-                        gameplayClicked = false;
-                        settingsClicked = false;
-                        OptionsPanel = false;
-                        gameplay.setVisible(false);
-                        profil.setVisible(false);
-                        discord.setVisible(true);
-                        settings.setVisible(true);
-                        usernameLabel.setVisible(false);
-                        repaint();
-                    }
-                }
-            }
-
-            private boolean isWithinImageBounds(int x, int y) {
-                Rectangle imageBounds = new Rectangle(12, 300, 621, 233); // Define image bounds here
-                return imageBounds.contains(x, y);
-            }
-        });
 
         play.setBounds(342, 350, 283, 63);
         this.add(play);
@@ -206,7 +99,6 @@ public class Panel extends JPanel {
                 ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
                 loading = false;
-                System.out.println(loading);
                 progressBar.setVisible(false);
                 progressBar2.setVisible(false);
 
@@ -301,19 +193,6 @@ public class Panel extends JPanel {
         play1.setBounds(342, 350, 283, 63);
         this.add(play1);
         play1.setVisible(false);
-
-        close.setBounds(900, 0, 51, 51);
-        this.add(close);
-        close.addActionListener(e -> System.exit(0));
-        close.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            }
-
-            public void mouseExited(MouseEvent e) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
-        });
 
         boutique.setBounds(12, 100, 51, 51);
         this.add(boutique);
@@ -423,6 +302,19 @@ public class Panel extends JPanel {
         this.add(discord1);
         discord1.setVisible(false);
 
+        // Create the progress bar
+        progressBar = new JProgressBar();
+        progressBar.setBounds(342, 530, 283, 20);
+        progressBar.setStringPainted(true); // Show progress percentage
+        this.add(progressBar);
+        progressBar.setVisible(false);
+
+        progressBar2 = new JProgressBar();
+        progressBar2.setBounds(342, 530, 283, 20);
+        progressBar2.setStringPainted(true); // Show progress percentage
+        this.add(progressBar2);
+        progressBar2.setVisible(false);
+
         settings.setBounds(12, 488, 51, 51);
         this.add(settings);
         settings.addMouseListener(new MouseAdapter() {
@@ -438,126 +330,23 @@ public class Panel extends JPanel {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (ConfigReader.getRefreshToken() != null) {
-                    settingsClickedIn = true;
-                    settingsClicked = true;
-                    OptionsPanel = true;
+                OptionPanel settingsPanel = new OptionPanel();
 
-                    settings1.setVisible(false);
-                    settings.setVisible(false);
-                    discord1.setVisible(false);
-                    discord.setVisible(false);
-                } else {
-                    settingsClickedIn = false;
-                    settingsClicked = true;
-                    OptionsPanel = true;
+                JFrame settingsFrame = new JFrame("Options");
+                settingsFrame.setSize(621, 233);
+                settingsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                settingsFrame.setLocationRelativeTo(null);
+                settingsFrame.setResizable(false);
+                settingsFrame.setIconImage(Frame.getImageFromURL());
+                settingsFrame.getContentPane().add(settingsPanel);
 
-                    settings1.setVisible(false);
-                    settings.setVisible(false);
-                    discord1.setVisible(false);
-                    discord.setVisible(false);
-                }
+                settingsFrame.setVisible(true);
             }
         });
 
         settings1.setBounds(12, 488, 188, 51);
         this.add(settings1);
         settings1.setVisible(false);
-
-        profil.setBounds(20, 350, 188, 51);
-        this.add(profil);
-        profil.setVisible(false);
-        profil.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            }
-
-            public void mouseExited(MouseEvent e) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
-
-            public void mouseClicked(MouseEvent e) {
-                profilClicked = true;
-                gameplayClicked = false;
-                repaint();
-            }
-        });
-
-        profil1.setBounds(20, 350, 198, 51);
-        this.add(profil1);
-        profil1.setVisible(false);
-
-        gameplay.setBounds(20, 450, 188, 51);
-        this.add(gameplay);
-        gameplay.setVisible(false);
-        gameplay.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            }
-
-            public void mouseExited(MouseEvent e) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
-
-            public void mouseClicked(MouseEvent e) {
-                gameplayClicked = true;
-                profilClicked = false;
-                repaint();
-            }
-        });
-
-        gameplay1.setBounds(20, 450, 198, 51);
-        this.add(gameplay1);
-        gameplay1.setVisible(false);
-
-        connexion.setBounds(335, 460, 188, 51);
-        this.add(connexion);
-        connexion.setVisible(false);
-        connexion.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            }
-
-            public void mouseExited(MouseEvent e) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
-
-            public void mouseClicked(MouseEvent e) {
-                Thread t = new Thread(new MicrosoftThread());
-                t.start();
-            }
-        });
-
-        deconnexion.setBounds(335, 460, 188, 51);
-        this.add(deconnexion);
-        deconnexion.setVisible(false);
-        deconnexion.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            }
-
-            public void mouseExited(MouseEvent e) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
-
-            public void mouseClicked(MouseEvent e) {
-                ConfigReader.removeRefreshToken();
-                ConfigReader.removeUsername();
-            }
-        });
-
-        // Create the progress bar
-        progressBar = new JProgressBar();
-        progressBar.setBounds(342, 530, 283, 20);
-        progressBar.setStringPainted(true); // Show progress percentage
-        this.add(progressBar);
-        progressBar.setVisible(false);
-
-        progressBar2 = new JProgressBar();
-        progressBar2.setBounds(342, 530, 283, 20);
-        progressBar2.setStringPainted(true); // Show progress percentage
-        this.add(progressBar2);
-        progressBar2.setVisible(false);
     }
 
     private JButton createButton(BufferedImage image) {
@@ -575,89 +364,50 @@ public class Panel extends JPanel {
 
         g.drawImage(background, 0, 0, this.getWidth(), this.getHeight(), this);
 
-        if (settingsClickedIn && !ConfigReader.getRefreshToken().isEmpty() || ConfigReader.getRefreshToken() != null
-                || profilClicked && ConfigReader.getRefreshToken() != null) {
-            g.drawImage(settingsPanelLoggedIn, 12, 300, 621, 233, this);
-        } else if (!settingsClickedIn && ConfigReader.getRefreshToken() == null
-                || profilClicked && ConfigReader.getRefreshToken() == null) {
-            g.drawImage(settingsPanelLoggedOut, 12, 300, 621, 233, this);
-        }
-        if (!OptionsPanel) {
-            g.drawImage(background, 0, 0, this.getWidth(), this.getHeight(), this);
-        }
-        if (gameplayClicked) {
-            g.drawImage(settingsPanelGameplay, 12, 300, 621, 233, this);
-        }
         if (!boutiqueHover) {
             boutique1.setVisible(false);
+            repaint();
         }
         if (boutiqueHover) {
             boutique1.setVisible(true);
         }
         if (forumHover) {
             forum1.setVisible(true);
+            repaint();
         }
         if (!forumHover) {
             forum1.setVisible(false);
+            repaint();
         }
         if (supportHover) {
             support1.setVisible(true);
+            repaint();
         }
         if (!supportHover) {
             support1.setVisible(false);
+            repaint();
         }
         if (discordHover && !settingsClicked) {
             discord1.setVisible(true);
+            repaint();
         }
         if (!discordHover && !settingsClicked) {
             discord1.setVisible(false);
+            repaint();
         }
         if (settingsHover) {
             settings1.setVisible(true);
+            repaint();
         }
         if (!settingsHover) {
             settings1.setVisible(false);
-        }
-        if (gameplayClicked) {
-            usernameLabel.setVisible(false);
-            gameplay1.setVisible(true);
-            profil1.setVisible(false);
-            profil.setVisible(true);
-            profilClicked = false;
-            deconnexion.setVisible(false);
-            connexion.setVisible(false);
-        } else if (profilClicked) {
-            if (ConfigReader.getRefreshToken() != null) {
-                connexion.setVisible(false);
-                deconnexion.setVisible(true);
-            } else {
-                deconnexion.setVisible(false);
-                connexion.setVisible(true);
-            }
-            profil1.setVisible(true);
-            gameplay1.setVisible(false);
-            usernameLabel.setVisible(true);
-            gameplay.setVisible(true);
-            gameplayClicked = false;
-        } else if (settingsClicked) {
-            if (ConfigReader.getRefreshToken() != null) {
-                connexion.setVisible(false);
-                deconnexion.setVisible(true);
-            } else {
-                deconnexion.setVisible(false);
-                connexion.setVisible(true);
-            }
-            usernameLabel.setVisible(true);
-            profil1.setVisible(true);
-            gameplay.setVisible(true);
-        } else {
-            gameplay1.setVisible(false);
-            profil1.setVisible(false);
+            repaint();
         }
         if (playClickedB && settingsClicked != true) {
             ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
             play.setVisible(false);
             play1.setVisible(true);
+            repaint();
             executor.schedule(() -> {
                 playClickedB = false;
             }, 1, TimeUnit.MILLISECONDS);
@@ -666,19 +416,13 @@ public class Panel extends JPanel {
         if (!playClickedB && settingsClicked != true) {
             play1.setVisible(false);
             play.setVisible(true);
+            repaint();
         }
 
         if (settingsClicked) {
             play1.setVisible(false);
             play.setVisible(false);
-        }
-        if (roundedProfilPicture != null && profil1.isVisible()) {
-            g.drawImage(roundedProfilPicture, 400, 325, 50, 50, this);
-            usernameLabel.setVisible(true);
-        }
-        if (!OptionsPanel) {
-            deconnexion.setVisible(false);
-            connexion.setVisible(false);
+            repaint();
         }
     }
 
@@ -715,9 +459,5 @@ public class Panel extends JPanel {
             double finalProgress = progress;
             javafx.application.Platform.runLater(() -> progressBar.setValue((int) (finalProgress * 100)));
         }
-    }
-
-    public RamSelector getRamSelector() {
-        return null;
     }
 }

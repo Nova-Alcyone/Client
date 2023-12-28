@@ -8,15 +8,12 @@ import fr.flowarg.flowupdater.versions.ForgeVersionBuilder;
 import fr.flowarg.flowupdater.versions.VanillaVersion;
 import fr.flowarg.openlauncherlib.NoFramework;
 import fr.litarvan.openauth.microsoft.MicrosoftAuthResult;
-import fr.litarvan.openauth.microsoft.MicrosoftAuthenticationException;
 import fr.litarvan.openauth.microsoft.MicrosoftAuthenticator;
 import fr.theshark34.openlauncherlib.minecraft.*;
 import qc.novaclient.utils.ConfigReader;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Arrays;
-import javax.swing.*;
 
 public class Launcher {
     private final static GameInfos gameInfos = new GameInfos("novaclient",
@@ -24,34 +21,6 @@ public class Launcher {
     private final static Path path = gameInfos.getGameDir();
     public static File crashFile = new File(String.valueOf(path), "crashes");
     private static AuthInfos authInfos;
-    public static String playerUsername; // Step 1: Class variable to store the username
-
-    public static void auth() throws MicrosoftAuthenticationException {
-        MicrosoftAuthenticator microsoftAuthenticator = new MicrosoftAuthenticator();
-        final String refresh_token = ConfigReader.getRefreshToken();
-        MicrosoftAuthResult result;
-        if (refresh_token != null && !refresh_token.isEmpty()) {
-            result = microsoftAuthenticator.loginWithRefreshToken(refresh_token);
-            playerUsername = ConfigReader.getRefreshToken(); // Step 3: Retrieve and store
-                                                             // username
-            authInfos = new AuthInfos(result.getProfile().getName(), result.getAccessToken(),
-                    result.getProfile().getId());
-        } else {
-            result = microsoftAuthenticator.loginWithWebview();
-            ConfigReader.setRefreshToken(result.getRefreshToken());
-            authInfos = new AuthInfos(result.getProfile().getName(), result.getAccessToken(),
-                    result.getProfile().getId());
-            if (result.getProfile() != null) {
-                playerUsername = result.getProfile().getName();
-                ConfigReader.setUsername(playerUsername);
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Bienvenue " + playerUsername + " sur Nova Antares!",
-                        "Yay!",
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
-    }
 
     public static void update() throws Exception {
 
@@ -74,13 +43,10 @@ public class Launcher {
         MicrosoftAuthResult result = microsoftAuthenticator.loginWithRefreshToken(refresh_token);
         authInfos = new AuthInfos(result.getProfile().getName(), result.getAccessToken(), result.getProfile().getId());
         NoFramework noFramework = new NoFramework(path, authInfos, GameFolder.FLOW_UPDATER);
-        noFramework.getAdditionalVmArgs()
-                .addAll(Arrays.asList(qc.novaclient.Frame.getInstance().getPanel().getRamSelector().getRamArguments()));
         noFramework.launch("1.19.4", "45.1.0", NoFramework.ModLoader.FORGE);
     }
 
     public static Path getPath() {
         return path;
     }
-
 }

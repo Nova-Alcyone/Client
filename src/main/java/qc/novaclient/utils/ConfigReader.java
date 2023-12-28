@@ -1,5 +1,9 @@
 package qc.novaclient.utils;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -8,6 +12,7 @@ import java.util.Map;
 public class ConfigReader {
 
     private static final String appDataPath = System.getenv("APPDATA");
+    private static final String novaLauncherConfigPath = Paths.get(appDataPath, "NovaLauncher", "data.json").toString();
     private static final String filePath = Paths.get(appDataPath, ".novaclient", "user.stock").toString();
 
     public static String getRefreshToken() {
@@ -18,6 +23,23 @@ public class ConfigReader {
     public static String getUsername() {
         Map<String, String> configMap = readConfigFile();
         return configMap.get("player_username");
+    }
+
+    public static String getRam() {
+        Map<String, String> configMap = readConfigFile();
+        return configMap.get("ram");
+    }
+
+    public static String getVersion() {
+        JsonObject novaLauncherConfig = readNovaLauncherConfig();
+        JsonElement latestVersionElement = novaLauncherConfig.get("latest_version");
+
+        if (latestVersionElement != null && latestVersionElement.isJsonPrimitive()) {
+            return latestVersionElement.getAsString();
+        } else {
+            return "";
+        }
+
     }
 
     public static void setRefreshToken(String refreshToken) {
@@ -32,6 +54,12 @@ public class ConfigReader {
         writeConfigFile(configMap);
     }
 
+    public static void setRam(String ram) {
+        Map<String, String> configMap = readConfigFile();
+        configMap.put("ram", ram);
+        writeConfigFile(configMap);
+    }
+
     public static void removeRefreshToken() {
         Map<String, String> configMap = readConfigFile();
         configMap.remove("refresh_token");
@@ -41,6 +69,12 @@ public class ConfigReader {
     public static void removeUsername() {
         Map<String, String> configMap = readConfigFile();
         configMap.remove("player_username");
+        writeConfigFile(configMap);
+    }
+
+    public static void removeRam() {
+        Map<String, String> configMap = readConfigFile();
+        configMap.remove("ram");
         writeConfigFile(configMap);
     }
 
@@ -68,6 +102,23 @@ public class ConfigReader {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static JsonObject readNovaLauncherConfig() {
+        try (Reader reader = new FileReader(novaLauncherConfigPath)) {
+            return JsonParser.parseReader(reader).getAsJsonObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new JsonObject();
+    }
+
+    public static boolean getLog() {
+        if (getRefreshToken() != null) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
