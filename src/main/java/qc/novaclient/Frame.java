@@ -1,6 +1,6 @@
 package qc.novaclient;
 
-import fr.theshark34.swinger.util.WindowMover;
+import qc.novaclient.utils.ConfigReader;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -13,29 +13,25 @@ public class Frame extends JFrame {
 
     private static Frame instance;
     private final Panel panel;
-    private final static File ramFile = new File(String.valueOf(Launcher.getPath()), "ram.txt");
     public static File saverFile = new File(String.valueOf(Launcher.getPath()), "user.stock");
 
     public Frame() {
         instance = this;
-        this.setTitle("Nova Launcher");
+        this.setTitle("Nova Client" + ConfigReader.getVersion());
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setSize(950, 550);
-        this.setUndecorated(true);
+        this.setSize(975, 605);
         this.setLocationRelativeTo(null);
         this.setIconImage(getImageFromURL());
         this.setContentPane(panel = new Panel());
-
-        WindowMover mover = new WindowMover(this);
-        this.addMouseListener(mover);
-        this.addMouseMotionListener(mover);
+        this.setResizable(false);
 
         this.setVisible(true);
     }
 
-    private BufferedImage getImageFromURL() {
+    static BufferedImage getImageFromURL() {
         try {
-            URL url = new URL("https://github.com/Muyga/NovaRepo/blob/main/Launcher/images/Nova-Antares.png?raw=true");
+            URL url = new URL(
+                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/Nova-Antares.png");
             return ImageIO.read(url);
         } catch (IOException e) {
             e.printStackTrace();
@@ -45,9 +41,6 @@ public class Frame extends JFrame {
 
     public static void main(String[] args) throws IOException {
         Launcher.crashFile.mkdirs();
-        if (!ramFile.exists()) {
-            ramFile.createNewFile();
-        }
         if (!saverFile.exists()) {
             saverFile.createNewFile();
         }
@@ -63,7 +56,11 @@ public class Frame extends JFrame {
         return this.panel;
     }
 
-    public static File getRamFile() {
-        return ramFile;
+    public static File getSaver() {
+        return saverFile;
+    }
+
+    public static String get(String string) {
+        return null;
     }
 }
