@@ -17,7 +17,7 @@ public class Frame extends JFrame {
 
     public Frame() {
         instance = this;
-        this.setTitle("Nova Client" + ConfigReader.getVersion());
+        this.setTitle("Nova Client " + ConfigReader.getVersion());
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(975, 605);
         this.setLocationRelativeTo(null);
