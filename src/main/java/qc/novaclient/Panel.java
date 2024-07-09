@@ -37,36 +37,39 @@ public class Panel extends JPanel {
     private final Image background = getImageFromURL(
             "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/background.png");
     private final JButton forum = createButton(
-            getImageFromURL("https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/Forum.png"));
+            getImageFromURL("https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/forum.png"));
     private final JButton settings = createButton(
             getImageFromURL(
                     "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/settings.png"));
     private final JButton settings1 = createButton(
             getImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/settings-hover.png"));
+                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/settings_hover.png"));
     private final JButton forum1 = createButton(
             getImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/forum-hover.png"));
+                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/forum_hover.png"));
     private final JButton support = createButton(
-            getImageFromURL("https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/Support.png"));
+            getImageFromURL("https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/support.png"));
     private final JButton support1 = createButton(
             getImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/support-hover.png"));
+                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/support_hover.png"));
     private final JButton discord = createButton(
-            getImageFromURL("https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/Discord.png"));
+            getImageFromURL("https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/discord.png"));
     private final JButton discord1 = createButton(
             getImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/discord-hover.png"));
+                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/discord_hover.png"));
     private final JButton play = createButton(
             getImageFromURL("https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/lancer.png"));
     private final JButton play1 = createButton(
             getImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/play-clicked.png"));
+                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/play_clicked.png"));
     private final JButton boutique = createButton(
             getImageFromURL("https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/boutique.png"));
     private final JButton boutique1 = createButton(
             getImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/boutique-hover.png"));
+                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/boutique_hover.png"));
+    private final JButton close = createButton(
+            getImageFromURL(
+                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/close.png"));
 
     private static JProgressBar progressBar = new JProgressBar();
     private static JProgressBar progressBar2 = new JProgressBar();
@@ -193,6 +196,24 @@ public class Panel extends JPanel {
         play1.setBounds(342, 350, 283, 63);
         this.add(play1);
         play1.setVisible(false);
+
+        close.setBounds(925, 0, 51, 51);
+        this.add(close);
+        close.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                System.exit(0);
+            }
+
+            public void mouseEntered(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            }
+
+            public void mouseExited(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
 
         boutique.setBounds(12, 100, 51, 51);
         this.add(boutique);

@@ -38,13 +38,13 @@ public class OptionPanel extends JPanel {
 
         // Load button icons
         ImageIcon button1Icon = loadIconFromURL(
-                "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil-normal.png");
+                "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil_normal.png");
         ImageIcon button2Icon = loadIconFromURL(
-                "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/gameplay-normal.png");
+                "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/gameplay_normal.png");
         ImageIcon button3Icon = loadIconFromURL(
                 "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/connexion.png");
         ImageIcon button4Icon = loadIconFromURL(
-                "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/disconnect-hover.png");
+                "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/disconnect_hover.png");
         ImageIcon button5Icon = loadIconFromURL(
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjsQZq0RwnUAYySw4Y7eJb2JZxr3Wnw8-TfTDqLGtdQQ&s");
 
@@ -84,13 +84,13 @@ public class OptionPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (ConfigReader.getRefreshToken() != null) {
                     setBackgroundImageFromURL(
-                            "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil-open-logged-in.png");
+                            "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil_open_logged_in.png");
                     add(button4);
                     remove(button3);
                     loadUserAvatar(370, 20, 50, 50);
                 } else {
                     setBackgroundImageFromURL(
-                            "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil-open-logged-off.png");
+                            "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil_open_logged_off.png");
                     add(button3);
                     remove(button4);
                     removeUserAvatar();
@@ -104,7 +104,7 @@ public class OptionPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setBackgroundImageFromURL(
-                        "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/gameplay-on.png");
+                        "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/gameplay_on.png");
 
                 remove(button3);
                 remove(button4);
@@ -136,7 +136,7 @@ public class OptionPanel extends JPanel {
                 remove(button4);
                 add(button3);
                 setBackgroundImageFromURL(
-                        "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil-open-logged-off.png");
+                        "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil_open_logged_off.png");
                 repaint();
 
                 JOptionPane.showMessageDialog(null,
@@ -152,13 +152,13 @@ public class OptionPanel extends JPanel {
 
         if (ConfigReader.getRefreshToken() != null) {
             setBackgroundImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil-open-logged-in.png");
+                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil_open_logged_in.png");
             add(button4);
             remove(button3);
             loadUserAvatar(370, 20, 50, 50);
         } else {
             setBackgroundImageFromURL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil-open-logged-off.png");
+                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil_open_logged_off.png");
             add(button3);
             remove(button4);
             removeUserAvatar();
@@ -254,7 +254,7 @@ public class OptionPanel extends JPanel {
                     add(button4);
                     remove(button3);
                     setBackgroundImageFromURL(
-                            "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil-open-logged-in.png");
+                            "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/profil_open_logged_in.png");
                     loadUserAvatar(370, 20, 50, 50);
 
                 }

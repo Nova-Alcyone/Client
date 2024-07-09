@@ -3,11 +3,13 @@ package qc.novaclient;
 import qc.novaclient.utils.ConfigReader;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import javax.swing.JFrame;
+
+import fr.theshark34.swinger.util.WindowMover;
 
 public class Frame extends JFrame {
 
@@ -17,13 +19,18 @@ public class Frame extends JFrame {
 
     public Frame() {
         instance = this;
-        this.setTitle("Nova Client " + ConfigReader.getVersion());
+        this.setTitle("Nova Client v" + ConfigReader.getVersion());
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(975, 605);
         this.setLocationRelativeTo(null);
         this.setIconImage(getImageFromURL());
         this.setContentPane(panel = new Panel());
         this.setResizable(false);
+        this.setUndecorated(true);
+
+        WindowMover mover = new WindowMover(this);
+        this.addMouseListener(mover);
+        this.addMouseMotionListener(mover);
 
         this.setVisible(true);
     }
@@ -31,7 +38,7 @@ public class Frame extends JFrame {
     static BufferedImage getImageFromURL() {
         try {
             URL url = new URL(
-                    "https://raw.githubusercontent.com/Nova-Alcyone/Repo/main/Launcher/images/Nova-Antares.png");
+                    "https://github.com/Nova-Alcyone/Repo/blob/main/Launcher/images/nova_alcyone.png?raw=true");
             return ImageIO.read(url);
         } catch (IOException e) {
             e.printStackTrace();
