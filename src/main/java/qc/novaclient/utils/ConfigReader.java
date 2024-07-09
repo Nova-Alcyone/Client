@@ -12,7 +12,7 @@ import java.util.Map;
 public class ConfigReader {
 
     private static final String appDataPath = System.getenv("APPDATA");
-    private static final String novaLauncherConfigPath = Paths.get(appDataPath, "NovaLauncher", "data.json").toString();
+    private static final String novaLauncherConfigPath = Paths.get(appDataPath, "novaclient", "data.json").toString();
     private static final String filePath = Paths.get(appDataPath, ".novaclient", "user.stock").toString();
 
     public static String getRefreshToken() {
