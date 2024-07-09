@@ -16,20 +16,20 @@ import java.io.File;
 import java.nio.file.Path;
 
 public class Launcher {
-    private final static GameInfos gameInfos = new GameInfos("novaclient",
-            new GameVersion("1.19.4", GameType.V1_13_HIGHER_FORGE), new GameTweak[] { GameTweak.FORGE });
+    private final static GameInfos gameInfos = new GameInfos("NovaAlcyone",
+            new GameVersion("1.12.2", GameType.V1_13_HIGHER_FORGE), new GameTweak[] { GameTweak.FORGE });
     private final static Path path = gameInfos.getGameDir();
     public static File crashFile = new File(String.valueOf(path), "crashes");
     private static AuthInfos authInfos;
 
     public static void update() throws Exception {
 
-        VanillaVersion vanillaVersion = new VanillaVersion.VanillaVersionBuilder().withName("1.19.4").build();
+        VanillaVersion vanillaVersion = new VanillaVersion.VanillaVersionBuilder().withName("1.12.2").build();
         UpdaterOptions options = new UpdaterOptions.UpdaterOptionsBuilder().build();
 
         AbstractForgeVersion version = new ForgeVersionBuilder(ForgeVersionBuilder.ForgeVersionType.NEW)
                 .withMods("https://novaalcyone.com/storage/lanceur/mods.php").withFileDeleter(new ModFileDeleter(true))
-                .withForgeVersion("45.1.0").build();
+                .withForgeVersion("14.23.5.2859").build();
 
         FlowUpdater updater = new FlowUpdater.FlowUpdaterBuilder().withVanillaVersion(vanillaVersion)
                 .withUpdaterOptions(options).withModLoaderVersion(version).build();
@@ -43,7 +43,7 @@ public class Launcher {
         MicrosoftAuthResult result = microsoftAuthenticator.loginWithRefreshToken(refresh_token);
         authInfos = new AuthInfos(result.getProfile().getName(), result.getAccessToken(), result.getProfile().getId());
         NoFramework noFramework = new NoFramework(path, authInfos, GameFolder.FLOW_UPDATER);
-        noFramework.launch("1.19.4", "45.1.0", NoFramework.ModLoader.FORGE);
+        noFramework.launch("1.12.2", "14.23.5.2859", NoFramework.ModLoader.FORGE);
     }
 
     public static Path getPath() {
