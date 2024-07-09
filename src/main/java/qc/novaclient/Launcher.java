@@ -16,7 +16,7 @@ import java.io.File;
 import java.nio.file.Path;
 
 public class Launcher {
-    private final static GameInfos gameInfos = new GameInfos("NovaAlcyone",
+    private final static GameInfos gameInfos = new GameInfos(".novaclient",
             new GameVersion("1.12.2", GameType.V1_13_HIGHER_FORGE), new GameTweak[] { GameTweak.FORGE });
     private final static Path path = gameInfos.getGameDir();
     public static File crashFile = new File(String.valueOf(path), "crashes");
